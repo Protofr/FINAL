@@ -364,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p class="mt-2 text-muted-foreground">
                             It looks like there are no items reported right now. Be the first to report one!
                         </p>
-                        <a href="report.html" class="button button-primary mt-4">Report a Found Item</a>
+                        <a href="FINAL/report.html" class="button button-primary mt-4">Report a Found Item</a>
                     </div>
                 `;
       }
@@ -401,7 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Render admin button if applicable
     if (user.email === "admin@gmail.com") {
-      adminButtonContainer.innerHTML = `<a href="admin.html" class="button button-primary">Admin Dashboard</a>`;
+      adminButtonContainer.innerHTML = `<a href="FINAL/admin.html" class="button button-primary">Admin Dashboard</a>`;
     } else {
       adminButtonContainer.innerHTML = "";
     }
