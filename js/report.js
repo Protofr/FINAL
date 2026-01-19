@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (!user) {
             // Not logged in, redirect to sign-in
-            window.location.href = '/sign-in.html';
+            window.location.href = 'sign-in.html';
             return;
         }
         currentUserData = user;
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             createToast("Report Submitted!", "Thank you for helping our community.");
-            window.location.href = "/dashboard.html";
+            window.location.href = "dashboard.html";
         } catch (error) {
             console.error("Error submitting report:", error);
             createToast("Submission Failed", error.message || "An unexpected error occurred. Please try again.", "destructive");

@@ -388,7 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!user || user.email !== 'admin@gmail.com') {
-            window.location.href = '/dashboard.html'; // Redirect non-admin users
+            window.location.href = 'dashboard.html'; // Redirect non-admin users
             return;
         }
 
