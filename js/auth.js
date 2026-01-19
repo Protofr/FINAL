@@ -54,7 +54,7 @@ async function signOutUser() {
     try {
         await firebaseAuth.signOut();
         createToast("Logged Out", "You have been successfully logged out.");
-        window.location.href = '/sign-in.html'; // Direct redirect as per original Next.js code
+        window.location.href = 'sign-in.html'; // Direct redirect as per original Next.js code
     } catch (error) {
         console.error("Sign-out error:", error);
         createToast("Logout Failed", "An error occurred during logout.", "destructive");
@@ -82,7 +82,7 @@ function updateHeader() {
 
     headerElement.innerHTML = `
         <div class="container mx-auto flex h-16 items-center px-4 md-px-6">
-            <a href="${currentUser ? "FINAL/dashboard.html" : "FINAL/index.html"}" class="logo">
+            <a href="${currentUser ? "dashboard.html" : "index.html"}" class="logo">
                 ${createClaimItLogo('h-6 w-6 text-primary').outerHTML}
                 <span class="font-headline font-bold">ClaimIt</span>
             </a>
@@ -101,9 +101,9 @@ function updateHeader() {
     if (currentUser) {
         nav.classList.remove('hidden'); // Show nav for logged-in users
         nav.innerHTML = `
-            <a href="FINAL/dashboard.html" class="button button-ghost">Dashboard</a>
-            <a href="FINAL/report.html" class="button button-ghost">Report an Item</a>
-            ${currentUser.email === 'admin@gmail.com' ? `<a href="FINAL/admin.html" class="button button-ghost">Admin</a>` : ''}
+            <a href="dashboard.html" class="button button-ghost">Dashboard</a>
+            <a href="report.html" class="button button-ghost">Report an Item</a>
+            ${currentUser.email === 'admin@gmail.com' ? `<a href="admin.html" class="button button-ghost">Admin</a>` : ''}
         `;
 
         const getFirstLetter = (name) => {
@@ -135,14 +135,14 @@ function updateHeader() {
     } else {
         nav.classList.add('hidden'); // Hide nav for logged-out users
         authSection.innerHTML = `
-            <a href="FINAL/sign-in.html" class="button button-ghost">Sign In</a>
-            <a href="FINAL/sign-up.html" class="button button-primary">Sign Up</a>
+            <a href="sign-in.html" class="button button-ghost">Sign In</a>
+            <a href="sign-up.html" class="button button-primary">Sign Up</a>
         `;
     }
 }
 
 // Expose helper so pages can require authentication and redirect automatically
-function requireAuth(redirectTo = '/sign-in.html') {
+function requireAuth(redirectTo = 'sign-in.html') {
     // If auth status already known, redirect immediately
     if (!isAuthLoading && !currentUser) {
         window.location.href = redirectTo;
