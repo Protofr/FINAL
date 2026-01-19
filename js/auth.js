@@ -54,7 +54,7 @@ async function signOutUser() {
     try {
         await firebaseAuth.signOut();
         createToast("Logged Out", "You have been successfully logged out.");
-        window.location.href = 'sign-in.html'; // Direct redirect as per original Next.js code
+        window.location.href = '/sign-in.html'; // Direct redirect as per original Next.js code
     } catch (error) {
         console.error("Sign-out error:", error);
         createToast("Logout Failed", "An error occurred during logout.", "destructive");
@@ -82,7 +82,7 @@ function updateHeader() {
 
     headerElement.innerHTML = `
         <div class="container mx-auto flex h-16 items-center px-4 md-px-6">
-            <a href="${currentUser ? "/dashboard.html" : "/"}" class="logo">
+            <a href="${currentUser ? "dashboard.html" : "index.html"}" class="logo">
                 ${createClaimItLogo('h-6 w-6 text-primary').outerHTML}
                 <span class="font-headline font-bold">ClaimIt</span>
             </a>
@@ -108,7 +108,11 @@ function updateHeader() {
 
         const getInitials = (name) => {
             if (!name) return "";
-            return name.charAt(0).toUpperCase();
+            const names = name.split(' ');
+            if (names.length > 1) {
+                return `${names[0][0]}${names[names.length - 1][0]}`;
+            }
+            return name.substring(0, 2).toUpperCase();
         };
 
         const avatarTrigger = createButton('', 'ghost', 'default', false, null, false, 'relative h-8 w-8 rounded-full');
@@ -142,7 +146,7 @@ function updateHeader() {
 }
 
 // Expose helper so pages can require authentication and redirect automatically
-function requireAuth(redirectTo = 'sign-in.html') {
+function requireAuth(redirectTo = '/sign-in.html') {
     // If auth status already known, redirect immediately
     if (!isAuthLoading && !currentUser) {
         window.location.href = redirectTo;

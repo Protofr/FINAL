@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     onUserChange(({ user, isUserLoading }) => {
         if (!isUserLoading && user) {
             // User is logged in, redirect to dashboard
-            window.location.href = 'dashboard.html';
+            window.location.href = '/dashboard.html';
         }
     });
 

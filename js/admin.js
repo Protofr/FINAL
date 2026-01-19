@@ -7,82 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUserData = null;
     let allClaims = [];
 
-    // Helper: create a dialog to get a reason from the admin
-    function showReasonDialog(title, message, onConfirm, onCancel) {
-        const overlay = document.createElement('div');
-        overlay.className = 'dialog-overlay';
-        overlay.style.position = 'fixed';
-        overlay.style.top = '0';
-        overlay.style.left = '0';
-        overlay.style.right = '0';
-        overlay.style.bottom = '0';
-        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-        overlay.style.display = 'flex';
-        overlay.style.alignItems = 'center';
-        overlay.style.justifyContent = 'center';
-        overlay.style.zIndex = '1000';
-
-        const dialogContent = document.createElement('div');
-        dialogContent.className = 'dialog-content';
-        dialogContent.style.backgroundColor = 'white';
-        dialogContent.style.borderRadius = '8px';
-        dialogContent.style.padding = '24px';
-        dialogContent.style.maxWidth = '400px';
-        dialogContent.style.width = '90%';
-        dialogContent.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-
-        const dialogHeader = document.createElement('div');
-        dialogHeader.className = 'dialog-header';
-        dialogHeader.innerHTML = `<h2 class="dialog-title" style="font-size: 1.25rem; font-weight: 600; margin: 0 0 8px 0;">${title}</h2><p class="dialog-description" style="color: #666; margin: 0 0 16px 0;">${message}</p>`;
-
-        const textarea = document.createElement('textarea');
-        textarea.className = 'form-textarea';
-        textarea.placeholder = 'Enter your reason here...';
-        textarea.style.width = '100%';
-        textarea.style.padding = '8px';
-        textarea.style.borderRadius = '4px';
-        textarea.style.border = '1px solid #ddd';
-        textarea.style.minHeight = '120px';
-        textarea.style.fontFamily = 'inherit';
-        textarea.style.marginBottom = '16px';
-        textarea.required = true;
-
-        const dialogFooter = document.createElement('div');
-        dialogFooter.className = 'dialog-footer';
-        dialogFooter.style.display = 'flex';
-        dialogFooter.style.gap = '8px';
-        dialogFooter.style.justifyContent = 'flex-end';
-
-        const cancelButton = createButton('Cancel', 'outline', 'default', false, () => {
-            overlay.remove();
-            if (onCancel) onCancel();
-        });
-        cancelButton.style.minWidth = '100px';
-        dialogFooter.appendChild(cancelButton);
-
-        const confirmButton = createButton('Confirm', 'primary', 'default', false, async () => {
-            const reason = textarea.value.trim();
-            if (!reason) {
-                createToast("Validation Error", "Please enter a reason.", "destructive");
-                return;
-            }
-            overlay.remove();
-            if (onConfirm) await onConfirm(reason);
-        });
-        confirmButton.style.minWidth = '100px';
-        dialogFooter.appendChild(confirmButton);
-
-        dialogContent.appendChild(dialogHeader);
-        dialogContent.appendChild(textarea);
-        dialogContent.appendChild(dialogFooter);
-        overlay.appendChild(dialogContent);
-        document.body.appendChild(overlay);
-
-        // Focus on textarea
-        textarea.focus();
-    }
-
-
+    // Helper: create a confirmation toast in bottom-right with action buttons
+    function showConfirmToast({ title = "Confirm", message = "", confirmText = "Confirm", cancelText = "Cancel", onConfirm = () => {}, onCancel = () => {}, timeout = 12000 } = {}) {
         const container = document.getElementById('toast-container');
         if (!container) return;
 
@@ -149,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const cardContent = document.createElement('div');
         cardContent.className = 'card-content space-y-4';
-        let contentHTML = `
+        cardContent.innerHTML = `
             <div class="relative aspect-4-3 w-full">
                 <img src="${claim.itemImage}" alt="${claim.itemName}" class="rounded-md object-cover" />
             </div>
@@ -160,18 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div>
                 <p class="text-sm font-semibold">Contact:</p>
                 <p class="text-sm text-muted-foreground">${claim.contactInformation}</p>
-            </div>`;
-        
-        // Add admin reason if it exists
-        if (claim.adminReason) {
-            contentHTML += `
-            <div>
-                <p class="text-sm font-semibold">Admin Reason:</p>
-                <p class="text-sm text-muted-foreground">${claim.adminReason}</p>
-            </div>`;
-        }
-        
-        cardContent.innerHTML = contentHTML;
+            </div>
+        `;
         card.appendChild(cardContent);
 
         const cardFooter = document.createElement('div');
@@ -188,26 +104,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const rejectButton = createButton('Reject', 'outline', 'sm', false, async () => {
                 rejectButton.disabled = true;
                 approveButton.disabled = true;
-                // Show dialog for rejection reason
-                showReasonDialog('Reject Claim', 'Please provide a reason for rejection:', async (reason) => {
-                    await handleUpdateStatus('Rejected', claim.foundItemId, claim.id, onUpdate, reason);
-                }, () => {
-                    rejectButton.disabled = false;
-                    approveButton.disabled = false;
-                });
+                await handleUpdateStatus('Rejected', claim.foundItemId, claim.id, onUpdate);
+                rejectButton.disabled = false;
+                approveButton.disabled = false;
             });
             buttonGroup.appendChild(rejectButton);
 
             const approveButton = createButton('Approve', 'primary', 'sm', false, async () => {
                 rejectButton.disabled = true;
                 approveButton.disabled = true;
-                // Show dialog for approval reason
-                showReasonDialog('Approve Claim', 'Please provide a reason for approval:', async (reason) => {
-                    await handleUpdateStatus('Approved', claim.foundItemId, claim.id, onUpdate, reason);
-                }, () => {
-                    rejectButton.disabled = false;
-                    approveButton.disabled = false;
-                });
+                await handleUpdateStatus('Approved', claim.foundItemId, claim.id, onUpdate);
+                rejectButton.disabled = false;
+                approveButton.disabled = false;
             });
             buttonGroup.appendChild(approveButton);
             cardFooter.appendChild(buttonGroup);
@@ -216,15 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return card;
     }
 
-    async function handleUpdateStatus(status, foundItemId, claimId, onUpdate, reason = '') {
+    async function handleUpdateStatus(status, foundItemId, claimId, onUpdate) {
         const claimDocRef = firebaseFirestore.collection('found_items').doc(foundItemId).collection('claims').doc(claimId);
 
         try {
-            const updateData = { status: status };
-            if (reason) {
-                updateData.adminReason = reason;
-            }
-            await updateFirestoreDoc(claimDocRef.parent.path, claimId, updateData);
+            await updateFirestoreDoc(claimDocRef.parent.path, claimId, { status: status });
 
             if (status === 'Approved') {
                 const itemDocRef = firebaseFirestore.collection('found_items').doc(foundItemId);
@@ -233,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Optimistically update UI before fetching
                 allClaims = allClaims.map(claim => {
                     if (claim.id === claimId) {
-                        return { ...claim, status: status, adminReason: reason };
+                        return { ...claim, status: status };
                     }
                     return claim;
                 });
@@ -244,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Same optimistic update for rejections
                 allClaims = allClaims.map(claim => {
                     if (claim.id === claimId) {
-                        return { ...claim, status: status, adminReason: reason };
+                        return { ...claim, status: status };
                     }
                     return claim;
                 });
@@ -388,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!user || user.email !== 'admin@gmail.com') {
-            window.location.href = 'dashboard.html'; // Redirect non-admin users
+            window.location.href = '/dashboard.html'; // Redirect non-admin users
             return;
         }
 
