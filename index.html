@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClaimIt - Lost & Found</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/ui-components.js"></script>
+    <script src="/js/auth.js"></script>
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <header id="main-header"></header>
+
+    <div class="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+        <div class="card w-full max-w-sm border-0 shadow-none sm-border sm-shadow-sm">
+            <div class="card-header text-center">
+                <div class="mx-auto mb-2">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 256 256"
+                        width="48"
+                        height="48"
+                        class="h-12 w-12 text-primary"
+                    >
+                        <path fill="none" d="M0 0h256v256H0z" />
+                        <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" d="M128 128h88m-176 0h88m-88 56h176" />
+                        <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" d="M40 128V72a8 8 0 0 1 8-8h152a8 8 0 0 1 8 8v56m0 56v24a8 8 0 0 1-8-8H48a8 8 0 0 1-8-8v-24" />
+                        <path d="M100 64a28 28 0 1 1-28-28 28 28 0 0 1 28 28z" fill="currentColor" />
+                    </svg>
+                </div>
+                <h1 class="card-title font-headline text-2xl">ClaimIt</h1>
+                <p class="card-description">Your campus lost and found solution.</p>
+            </div>
+            <div class="card-content">
+                <div class="space-y-4">
+                    <button id="getStartedButton" class="button button-primary w-full">Get Started</button>
+                    <a href="/sign-in.html" class="button button-outline w-full">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateHeader(); // Update header based on initial auth state
+
+            const getStartedButton = document.getElementById('getStartedButton');
+            if (getStartedButton) {
+                // Use onUserChange to ensure currentUser is loaded
+                onUserChange(({ user, isUserLoading }) => {
+                    if (!isUserLoading) {
+                        getStartedButton.addEventListener('click', () => {
+                            if (user) {
+                                window.location.href = '/dashboard.html';
+                            } else {
+                                window.location.href = '/sign-up.html';
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ClaimIt</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/ui-components.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/firestore.js"></script>
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <header id="main-header"></header>
+
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="font-headline text-3xl font-bold tracking-tight sm:text-4xl mb-8">
+            Admin Dashboard
+        </h1>
+
+        <div class="tabs-list" id="adminTabsList">
+            <!-- Tabs triggers will be injected here -->
+        </div>
+
+        <div id="tabsContentContainer">
+            <!-- Tabs content will be injected here -->
+        </div>
+    </div>
+
+    <script src="/js/admin.js"></script>
+    <script>
+        // Protect admin page: redirect to sign-in if not authenticated
+        if (typeof requireAuth === 'function') {
+            requireAuth('/sign-in.html');
+        }
+    </script>
+</body>
+</html>
