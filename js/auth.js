@@ -106,18 +106,14 @@ function updateHeader() {
             ${currentUser.email === 'admin@gmail.com' ? `<a href="admin.html" class="button button-ghost">Admin</a>` : ''}
         `;
 
-        const getInitials = (name) => {
-            if (!name) return "";
-            const names = name.split(' ');
-            if (names.length > 1) {
-                return `${names[0][0]}${names[names.length - 1][0]}`;
-            }
-            return name.substring(0, 2).toUpperCase();
+        const getFirstLetter = (name) => {
+            if (!name) return "U";
+            return name.charAt(0).toUpperCase();
         };
 
         const avatarTrigger = createButton('', 'ghost', 'default', false, null, false, 'relative h-8 w-8 rounded-full');
         // Ensure that createAvatar uses the correct classes for styling
-        const avatar = createAvatar(currentUser.photoURL, currentUser.displayName, getInitials(currentUser.displayName), 'h-8 w-8');
+        const avatar = createAvatar(null, currentUser.displayName, getFirstLetter(currentUser.displayName), 'h-8 w-8');
         avatarTrigger.appendChild(avatar);
 
         const dropdown = createDropdownMenu(avatarTrigger, [

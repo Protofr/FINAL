@@ -17,7 +17,6 @@ async function getFirestoreDoc(collectionPath, docId) {
         }
     } catch (error) {
         console.error("Error fetching document:", collectionPath, docId, error);
-        createToast("Data Fetch Error", `Could not fetch document: ${docId}.`, "destructive");
         throw error;
     }
 }
@@ -49,7 +48,6 @@ async function getFirestoreCollection(pathOrQuery, isCollectionGroup = false) {
         return results;
     } catch (error) {
         console.error("Error fetching collection:", error);
-        createToast("Data Fetch Error", `Could not fetch data from collection.`, "destructive");
         throw error;
     }
 }
@@ -67,7 +65,6 @@ async function addFirestoreDoc(collectionPath, data) {
         return docRef.id;
     } catch (error) {
         console.error("Error adding document:", collectionPath, data, error);
-        createToast("Save Error", `Could not add document to ${collectionPath}.`, "destructive");
         throw error;
     }
 }
@@ -85,7 +82,6 @@ async function updateFirestoreDoc(collectionPath, docId, data) {
         await docRef.update(data);
     } catch (error) {
         console.error("Error updating document:", collectionPath, docId, data, error);
-        createToast("Update Error", `Could not update document ${docId}.`, "destructive");
         throw error;
     }
 }
@@ -102,7 +98,6 @@ async function deleteFirestoreDoc(collectionPath, docId) {
         await docRef.delete();
     } catch (error) {
         console.error("Error deleting document:", collectionPath, docId, error);
-        createToast("Deletion Error", `Could not delete document ${docId}.`, "destructive");
         throw error;
     }
 }
@@ -128,7 +123,6 @@ async function executeBatch(operations) {
         await batch.commit();
     } catch (error) {
         console.error("Error executing batch:", operations, error);
-        createToast("Batch Write Error", "Failed to complete multiple operations.", "destructive");
         throw error;
     }
 }

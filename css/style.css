@@ -603,8 +603,10 @@ header nav a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   line-height: 1;
+  color: #fff;
+  font-weight: 600;
 }
 
 /* Dropdown Menu Styles */
